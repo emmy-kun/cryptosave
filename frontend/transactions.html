@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,57 +9,71 @@
 
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<!-- TOP NAV -->
-<div class="top-nav">
+  <!-- TOP NAV -->
+  <div class="top-nav">
 
-  <div class="nav-left">
-    <img src="/cryptosave2.png" class="site-logo" />
-  </div>
-
-  <div class="top-links" id="navLinks">
-    <a href="dashboard.html" class="nav-link" id="nav-dashboard">Dashboard</a>
-    <a href="wallet.html" class="nav-link" id="nav-wallet">Wallet</a>
-    <a href="transactions.html" class="nav-link" id="nav-transactions">Transactions</a>
-  </div>
-
-<div class="nav-right">
-  <div class="user" onclick="logout()">Logout</div>
-  <div class="hamburger" id="hamburger">☰</div>
-</div>
-
-</div>
-<div class="container">
-
-  <div class="left">
-    <div class="section-title">All Transactions</div>
-
-    <!-- ✅ ADD THIS HERE -->
-    <div class="filter-bar">
-      <span>All</span>
-      <span>Deposits</span>
-      <span>Interest</span>
+    <div class="nav-left">
+      <img src="/cryptosave2.png" class="site-logo" />
     </div>
 
-    <table class="table">
+    <div class="top-links" id="navLinks">
+      <a href="dashboard.html" class="nav-link" id="nav-dashboard">Dashboard</a>
+      <a href="wallet.html" class="nav-link" id="nav-wallet">Wallet</a>
+      <a href="transactions.html" class="nav-link" id="nav-transactions">Transactions</a>
+    </div>
 
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Type</th>
-          <th>Amount</th>
-          <th>Status</th>
-        </tr>
-      </thead>
 
-      <tbody id="allTransactions"></tbody>
-    </table>
+
+    <div class="nav-right">
+      <div class="live-indicator">
+        <span class="live-dot"></span>
+        <span class="live-text">Live</span>
+      </div>
+      <div class="user" onclick="logout()">Logout</div>
+      <div class="hamburger" id="hamburger">☰</div>
+    </div>
+
+  </div>
+  <div class="container">
+
+    <div class="left">
+      <div class="section-title">All Transactions</div>
+
+      <!-- ✅ ADD THIS HERE -->
+      <div class="tx-filter">
+        <button onclick="filterTransactions('all')" class="tx-btn active">
+          All
+        </button>
+      
+        <button onclick="filterTransactions('deposit')" class="tx-btn">
+          Deposit
+        </button>
+      
+        <button onclick="filterTransactions('interest')" class="tx-btn">
+          Interest
+        </button>
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody id="allTransactions"></tbody>
+      </table>
+    </div>
+
   </div>
 
-</div>
-
-<script src="transactions.js"></script>
+  <script src="transactions.js"></script>
 </body>
+
 </html>

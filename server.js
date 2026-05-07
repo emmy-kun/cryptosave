@@ -1,6 +1,6 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const cors = require("cors");
+const mongoose = require("mongoose");
 require("dotenv").config();
 
 const app = express();
@@ -12,8 +12,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(__dirname));
 
-
-
 /* =========================
    MONGODB
 ========================= */
@@ -21,15 +19,18 @@ const MONGO_URI = process.env.MONGO_URI;
 
 if (!MONGO_URI) {
   console.error("❌ MONGO_URI missing in .env");
+  process.exit(1);
 }
 
 mongoose.connect(MONGO_URI)
-  .then(() => console.log("MongoDB connected"))
-  .catch(err => console.log("MongoDB error:", err));
+  .then(() => {
+    console.log("✅ MongoDB connected successfully");
+  })
+  .catch((err) => {
+    console.error("❌ MongoDB connection error:", err.message);
+  });
 
-  
-
-  /* =========================
+/* =========================
    DEPOSIT ADDRESS (SINGLE)
 ========================= */
 let depositAddress = "bc1qdefaultaddressxxxx";
@@ -43,9 +44,10 @@ app.get("/api/deposit-address", (req, res) => {
 
 /* =========================
    UPDATE DEPOSIT ADDRESS (ADMIN)
+   FIXED ROUTE CONSISTENCY
 ========================= */
 app.put("/api/admin/deposit-address", (req, res) => {
-  const { address } = req.body;
+  const { address } = req.body || {};
 
   if (!address) {
     return res.status(400).json({ error: "Address required" });
@@ -104,7 +106,7 @@ app.get("/portfolio", async (req, res) => {
 /* =========================
    ADMIN UPDATE PORTFOLIO
 ========================= */
-app.post("/admin/update", async (req, res) => {
+app.post("/clone-admin/update", async (req, res) => {
   const { assets, transactions } = req.body || {};
 
   let data = await Portfolio.findOne().sort({ _id: -1 });
@@ -161,3 +163,5 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log("Server running on port " + PORT);
 });
+
+console.log("ENV CHECK:", process.env.MONGO_URI);

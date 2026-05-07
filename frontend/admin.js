@@ -4,7 +4,7 @@ async function updateAssets() {
   const usdt = Number(document.getElementById("usdt").value) || 0;
   const sol = Number(document.getElementById("sol").value) || 0;
 
-  await fetch("https://crypto-save-production.up.railway.app/admin/update", {
+  await fetch("http://localhost:5000/clone-admin/update", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -22,13 +22,17 @@ async function updateAssets() {
   alert("Assets updated");
 }
 
+
+/* =========================
+   ADD TRANSACTION (FIXED)
+========================= */
 async function addTransaction() {
   const date = document.getElementById("date").value;
   const type = document.getElementById("type").value;
   const amount = Number(document.getElementById("amount").value);
   const status = document.getElementById("status").value;
 
-  await fetch("https://crypto-save-production.up.railway.app/admin/update", {
+  await fetch("http://localhost:5000/clone-admin/update", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -43,6 +47,10 @@ async function addTransaction() {
   alert("Transaction added");
 }
 
+
+/* =========================
+   UPDATE DEPOSIT ADDRESS
+========================= */
 async function addDepositAddress() {
   const address = document.getElementById("depositAddressInput").value;
 
@@ -52,9 +60,11 @@ async function addDepositAddress() {
   }
 
   try {
-    const res = await fetch("https://crypto-save-production.up.railway.app/api/admin/deposit-address", {
+    const res = await fetch("http://localhost:5000/api/admin/deposit-address", {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({ address })
     });
 

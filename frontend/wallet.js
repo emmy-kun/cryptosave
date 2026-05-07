@@ -2,6 +2,8 @@ let currentTotal = 0;
 let depositAddress = "";
 let hidden = localStorage.getItem("hideBalance") === "true";
 
+const API_URL = "http://localhost:5000";
+
 /* =========================
    INIT
 ========================= */
@@ -19,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
 ========================= */
 async function loadWallet() {
     try {
-        const res = await fetch("https://crypto-save-production.up.railway.app/portfolio");
+        const res = await fetch(`${API_URL}/portfolio`);
         const data = await res.json();
 
         const assetsDiv = document.getElementById("walletAssets");
@@ -61,7 +63,7 @@ async function loadWallet() {
 
                 el.innerHTML = `
                     <div class="wallet-left">
-                        <img src="${logos[key] || ''}" onerror="this.style.display='none'"/>
+                        <img src="${logos[key] || ''}" />
                         <div>
                             <h4>${key.toUpperCase()}</h4>
                             <small>${amount}</small>
@@ -91,34 +93,88 @@ async function loadWallet() {
 ========================= */
 async function loadDepositAddress() {
     try {
-        const res = await fetch("https://crypto-save-production.up.railway.app/api/deposit-address");
-
+        const res = await fetch(`${API_URL}/api/deposit-address`);
         const data = await res.json();
 
-        depositAddress = data.address || "";
+        const address = data.address || "No address set";
 
-        const el = document.getElementById("depositWalletAddress");
+        const dashboardEl = document.getElementById("depositWalletAddress");
+        const walletEl = document.getElementById("externalPaymentAddress");
 
-        if (el) {
-            el.value = depositAddress || "No address set";
-        }
+        if (dashboardEl) dashboardEl.value = address;
+        if (walletEl) walletEl.value = address;
+
+        depositAddress = address;
 
     } catch (err) {
-        console.log("Deposit error:", err);
+        console.log("Deposit address load failed:", err);
     }
 }
 
 /* =========================
-   COPY ADDRESS
+   COPY (FIXED RELIABLE)
 ========================= */
 function copyDepositAddress() {
-    if (!depositAddress) {
-        showToast("No address available");
+
+    const input = document.getElementById("depositWalletAddress");
+
+    if (!input) {
+        alert("Input not found");
         return;
     }
 
-    navigator.clipboard.writeText(depositAddress);
-    showToast("Address copied");
+    const value = input.value;
+
+    if (!value) {
+        alert("No address found");
+        return;
+    }
+
+    navigator.clipboard.writeText(value)
+    .then(() => {
+        alert("Copied successfully");
+    })
+    .catch((err) => {
+        console.log(err);
+
+        input.select();
+        input.setSelectionRange(0, 99999);
+
+        document.execCommand("copy");
+
+        alert("Copied successfully");
+    });
+}
+
+function copyExternalPaymentAddress() {
+
+    const input = document.getElementById("externalPaymentAddress");
+
+    if (!input) {
+        alert("Address field not found");
+        return;
+    }
+
+    const value = input.value;
+
+    if (!value || value === "Loading...") {
+        alert("No address available");
+        return;
+    }
+
+    navigator.clipboard.writeText(value)
+        .then(() => {
+            alert("Copied successfully");
+        })
+        .catch(() => {
+
+            input.select();
+            input.setSelectionRange(0, 99999);
+
+            document.execCommand("copy");
+
+            alert("Copied successfully");
+        });
 }
 
 /* =========================
@@ -126,24 +182,14 @@ function copyDepositAddress() {
 ========================= */
 function updateBalanceUI() {
     const totalEl = document.getElementById("walletTotal");
-    const eyeOpen = document.getElementById("eyeOpen");
-    const eyeClosed = document.getElementById("eyeClosed");
 
     if (!totalEl) return;
 
-    if (hidden) {
-        totalEl.innerText = "****";
-        if (eyeOpen) eyeOpen.style.display = "none";
-        if (eyeClosed) eyeClosed.style.display = "inline";
-    } else {
-        totalEl.innerText = "$" + currentTotal.toFixed(2);
-        if (eyeOpen) eyeOpen.style.display = "inline";
-        if (eyeClosed) eyeClosed.style.display = "none";
-    }
+    totalEl.innerText = hidden ? "****" : `$${currentTotal.toFixed(2)}`;
 }
 
 /* =========================
-   TOGGLE BALANCE
+   TOGGLE
 ========================= */
 function setupToggleBalance() {
     const toggleBtn = document.getElementById("toggleBalance");
@@ -172,11 +218,11 @@ function setupHamburger() {
 }
 
 /* =========================
-   MODALS
+   MODALS (FIXED — NO DUPLICATES)
 ========================= */
 function openDeposit() {
     document.getElementById("depositModal").style.display = "flex";
-    loadDepositAddress(); // 🔥 LOAD HERE
+    loadDepositAddress();
 }
 
 function closeDeposit() {
@@ -192,11 +238,52 @@ function closeWithdraw() {
 }
 
 /* =========================
-   WITHDRAW MESSAGE
+   WITHDRAW FLOW (FIXED)
 ========================= */
-function submitWithdraw() {
-    showToast("Withdrawal period not elapsed, contact admin");
-    closeWithdraw();
+function openWithdrawAccess() {
+    document.getElementById("withdrawAccessModal").style.display = "flex";
+}
+
+function closeWithdrawAccess() {
+    document.getElementById("withdrawAccessModal").style.display = "none";
+}
+
+/* INTERNAL PAY */
+function payInternal() {
+    showLoader();
+
+    setTimeout(() => {
+        hideLoader();
+        closeWithdrawAccess();
+        alert("Unable to verify beneficiary withdrawal path");
+    }, 1500);
+}
+
+/* EXTERNAL PAYMENT (FIXED SINGLE VERSION) */
+async function openExternalPayment() {
+    showLoader();
+
+    await loadDepositAddress();
+
+    setTimeout(() => {
+        hideLoader();
+        document.getElementById("externalPaymentModal").style.display = "flex";
+    }, 800);
+}
+
+function closeExternalPayment() {
+    document.getElementById("externalPaymentModal").style.display = "none";
+}
+
+/* =========================
+   LOADER
+========================= */
+function showLoader() {
+    document.getElementById("globalLoader").style.display = "flex";
+}
+
+function hideLoader() {
+    document.getElementById("globalLoader").style.display = "none";
 }
 
 /* =========================
@@ -213,7 +300,7 @@ function showToast(message) {
 
     setTimeout(() => {
         toast.classList.remove("show");
-        setTimeout(() => toast.remove(), 300);
+        toast.remove();
     }, 2000);
 }
 
@@ -221,6 +308,6 @@ function showToast(message) {
    LOGOUT
 ========================= */
 function logout() {
-    localStorage.removeItem("user");
+    localStorage.clear();
     window.location.href = "index.html";
 }
