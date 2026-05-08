@@ -258,27 +258,20 @@ body {
 .table {
   width: 100%;
   border-collapse: collapse;
-  background: #020617;
-  border-radius: 12px;
-  overflow: hidden;
+}
 
-  /* ✅ ADDED: prevents layout breaking */
+.table thead tr,
+.table tbody tr {
+  display: table;
+  width: 100%;
   table-layout: fixed;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
-.table th {
-  text-align: left;
-  padding: 12px;
-  color: #94a3b8;
-  font-size: 13px;
-}
-
+.table th,
 .table td {
-  padding: 14px 12px;
-  border-top: 1px solid #1e293b;
-
-  /* ✅ ADDED: fixes text overlapping */
-  font-size: 13px;
+  padding: 16px 20px;
+  text-align: left;
   word-wrap: break-word;
 }
 
