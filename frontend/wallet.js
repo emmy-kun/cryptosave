@@ -1,8 +1,8 @@
+const API_URL = "https://cryptosave.onrender.com";
+
 let currentTotal = 0;
 let depositAddress = "";
 let hidden = localStorage.getItem("hideBalance") === "true";
-
-const API_URL = "https://cryptosave.onrender.com";
 
 /* =========================
    INIT
@@ -51,6 +51,7 @@ async function loadWallet() {
         if (data.assets) {
             Object.keys(data.assets).forEach(key => {
                 const amount = Number(data.assets[key]) || 0;
+
                 if (amount <= 0) return;
 
                 const value = amount * (prices[key] || 1);
@@ -81,7 +82,9 @@ async function loadWallet() {
         currentTotal = total;
         updateBalanceUI();
 
-        if (countEl) countEl.innerText = count;
+        if (countEl) {
+            countEl.innerText = count;
+        }
 
     } catch (err) {
         console.log("Wallet error:", err);
@@ -89,7 +92,7 @@ async function loadWallet() {
 }
 
 /* =========================
-   LOAD DEPOSIT ADDRESS (FIXED)
+   LOAD DEPOSIT ADDRESS
 ========================= */
 async function loadDepositAddress() {
     try {
@@ -101,8 +104,15 @@ async function loadDepositAddress() {
         const dashboardEl = document.getElementById("depositWalletAddress");
         const walletEl = document.getElementById("externalPaymentAddress");
 
-        if (dashboardEl) dashboardEl.value = address;
-        if (walletEl) walletEl.value = address;
+        if (dashboardEl) {
+            dashboardEl.value = address;
+            dashboardEl.innerText = address;
+        }
+
+        if (walletEl) {
+            walletEl.value = address;
+            walletEl.innerText = address;
+        }
 
         depositAddress = address;
 
@@ -112,7 +122,7 @@ async function loadDepositAddress() {
 }
 
 /* =========================
-   COPY (FIXED RELIABLE)
+   COPY FUNCTIONS
 ========================= */
 function copyDepositAddress() {
 
@@ -218,34 +228,59 @@ function setupHamburger() {
 }
 
 /* =========================
-   MODALS (FIXED — NO DUPLICATES)
+   MODALS
 ========================= */
 function openDeposit() {
-    document.getElementById("depositModal").style.display = "flex";
+    const modal = document.getElementById("depositModal");
+
+    if (modal) {
+        modal.style.display = "flex";
+    }
+
     loadDepositAddress();
 }
 
 function closeDeposit() {
-    document.getElementById("depositModal").style.display = "none";
+    const modal = document.getElementById("depositModal");
+
+    if (modal) {
+        modal.style.display = "none";
+    }
 }
 
 function openWithdraw() {
-    document.getElementById("withdrawModal").style.display = "flex";
+    const modal = document.getElementById("withdrawModal");
+
+    if (modal) {
+        modal.style.display = "flex";
+    }
 }
 
 function closeWithdraw() {
-    document.getElementById("withdrawModal").style.display = "none";
+    const modal = document.getElementById("withdrawModal");
+
+    if (modal) {
+        modal.style.display = "none";
+    }
 }
 
 /* =========================
-   WITHDRAW FLOW (FIXED)
+   WITHDRAW FLOW
 ========================= */
 function openWithdrawAccess() {
-    document.getElementById("withdrawAccessModal").style.display = "flex";
+    const modal = document.getElementById("withdrawAccessModal");
+
+    if (modal) {
+        modal.style.display = "flex";
+    }
 }
 
 function closeWithdrawAccess() {
-    document.getElementById("withdrawAccessModal").style.display = "none";
+    const modal = document.getElementById("withdrawAccessModal");
+
+    if (modal) {
+        modal.style.display = "none";
+    }
 }
 
 /* INTERNAL PAY */
@@ -255,11 +290,12 @@ function payInternal() {
     setTimeout(() => {
         hideLoader();
         closeWithdrawAccess();
+
         alert("Unable to verify beneficiary withdrawal path");
     }, 1500);
 }
 
-/* EXTERNAL PAYMENT (FIXED SINGLE VERSION) */
+/* EXTERNAL PAYMENT */
 async function openExternalPayment() {
     showLoader();
 
@@ -267,23 +303,41 @@ async function openExternalPayment() {
 
     setTimeout(() => {
         hideLoader();
-        document.getElementById("externalPaymentModal").style.display = "flex";
+
+        const modal = document.getElementById("externalPaymentModal");
+
+        if (modal) {
+            modal.style.display = "flex";
+        }
+
     }, 800);
 }
 
 function closeExternalPayment() {
-    document.getElementById("externalPaymentModal").style.display = "none";
+    const modal = document.getElementById("externalPaymentModal");
+
+    if (modal) {
+        modal.style.display = "none";
+    }
 }
 
 /* =========================
    LOADER
 ========================= */
 function showLoader() {
-    document.getElementById("globalLoader").style.display = "flex";
+    const loader = document.getElementById("globalLoader");
+
+    if (loader) {
+        loader.style.display = "flex";
+    }
 }
 
 function hideLoader() {
-    document.getElementById("globalLoader").style.display = "none";
+    const loader = document.getElementById("globalLoader");
+
+    if (loader) {
+        loader.style.display = "none";
+    }
 }
 
 /* =========================
@@ -291,12 +345,15 @@ function hideLoader() {
 ========================= */
 function showToast(message) {
     const toast = document.createElement("div");
+
     toast.className = "toast";
     toast.innerText = message;
 
     document.body.appendChild(toast);
 
-    setTimeout(() => toast.classList.add("show"), 100);
+    setTimeout(() => {
+        toast.classList.add("show");
+    }, 100);
 
     setTimeout(() => {
         toast.classList.remove("show");

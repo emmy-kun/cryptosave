@@ -1,3 +1,5 @@
+const API_URL = "https://cryptosave.onrender.com";
+
 document.getElementById("nav-transactions").classList.add("nav-active");
 
 /* =========================
@@ -11,7 +13,7 @@ let currentFilter = "all";
 ========================= */
 async function loadTransactions() {
     try {
-        const res = await fetch("https://cryptosave.onrender.com/portfolio");
+        const res = await fetch(`${API_URL}/portfolio`);
         const data = await res.json();
 
         allTransactions = Array.isArray(data.transactions)
@@ -78,14 +80,16 @@ function renderTransactions() {
 /* =========================
    FILTER BUTTONS
 ========================= */
-function filterTransactions(type) {
+function filterTransactions(type, event) {
     currentFilter = type;
 
     document.querySelectorAll(".tx-btn").forEach(btn => {
         btn.classList.remove("active");
     });
 
-    event.target.classList.add("active");
+    if (event) {
+        event.target.classList.add("active");
+    }
 
     renderTransactions();
 }

@@ -1,10 +1,15 @@
+const API_URL = "https://cryptosave.onrender.com";
+
+/* =========================
+   UPDATE ASSETS
+========================= */
 async function updateAssets() {
   const btc = Number(document.getElementById("btc").value) || 0;
   const eth = Number(document.getElementById("eth").value) || 0;
   const usdt = Number(document.getElementById("usdt").value) || 0;
   const sol = Number(document.getElementById("sol").value) || 0;
 
-  await fetch("https://cryptosave.onrender.com/clone-admin/update", {
+  await fetch(`${API_URL}/clone-admin/update`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -24,7 +29,7 @@ async function updateAssets() {
 
 
 /* =========================
-   ADD TRANSACTION (FIXED)
+   ADD TRANSACTION
 ========================= */
 async function addTransaction() {
   const date = document.getElementById("date").value;
@@ -32,7 +37,7 @@ async function addTransaction() {
   const amount = Number(document.getElementById("amount").value);
   const status = document.getElementById("status").value;
 
-  await fetch("https://cryptosave.onrender.com/clone-admin/update", {
+  await fetch(`${API_URL}/clone-admin/update`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -60,7 +65,7 @@ async function addDepositAddress() {
   }
 
   try {
-    const res = await fetch("https://cryptosave.onrender.com/api/admin/deposit-address", {
+    const res = await fetch(`${API_URL}/api/admin/deposit-address`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json"
