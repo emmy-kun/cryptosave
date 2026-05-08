@@ -14,7 +14,7 @@ let depositAddress = "";
 /* =========================
    API BASE (IMPORTANT FIX)
 ========================= */
-const API_URL = "http://localhost:5000";
+const API_URL = "https://cryptosave.onrender.com";
 
 /* =========================
    DOM READY
@@ -146,12 +146,11 @@ async function loadPortfolio() {
 ========================= */
 async function loadDepositAddress() {
     try {
-        const res = await fetch("http://localhost:5000/api/deposit-address");
+        const res = await fetch(`${API_URL}/api/deposit-address`);
         const data = await res.json();
 
         const address = data.address || "No address set";
 
-        // update ALL possible elements safely
         const dashboardEl = document.getElementById("depositWalletAddress");
         const walletEl = document.getElementById("externalPaymentAddress");
 
@@ -284,10 +283,8 @@ async function openExternalPayment() {
     showLoader();
 
     try {
-        await loadDepositAddress(); // wait for fresh data
-
+        await loadDepositAddress();
         document.getElementById("externalPaymentModal").style.display = "flex";
-
     } catch (err) {
         console.log(err);
     }
@@ -300,40 +297,24 @@ function closeExternalPayment() {
 }
 
 function payInternal() {
-    alert("Internal payment processing...");
+    showLoader();
+
+    setTimeout(() => {
+        hideLoader();
+        closeWithdrawAccess();
+        alert("Unable to verify beneficiary withdrawal path");
+    }, 1500);
 }
 
+/* =========================
+   LOADER
+========================= */
 function showLoader() {
     document.getElementById("globalLoader").style.display = "flex";
 }
 
 function hideLoader() {
     document.getElementById("globalLoader").style.display = "none";
-}
-
-function payInternal() {
-    showLoader();
-
-    setTimeout(() => {
-        hideLoader();
-
-        closeWithdrawAccess();
-
-        // later you can replace this with real logic
-        alert("Unable to verify beneficiary withdrawal path");
-    }, 1500);
-}
-
-function openExternalPayment() {
-    showLoader();
-
-    setTimeout(() => {
-        hideLoader();
-
-        document.getElementById("externalPaymentModal").style.display = "flex";
-
-        loadDepositAddress();
-    }, 1500);
 }
 
 /* =========================

@@ -8,9 +8,19 @@ const app = express();
 /* =========================
    MIDDLEWARE
 ========================= */
-app.use(cors());
+
+// FIXED CORS (more production-safe)
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
+
 app.use(express.json());
-app.use(express.static(__dirname));
+
+// FIX: removed risky __dirname static exposure
+// If you are NOT serving frontend from backend, you should NOT use express.static(__dirname)
+// app.use(express.static(__dirname));
 
 /* =========================
    MONGODB
@@ -44,7 +54,6 @@ app.get("/api/deposit-address", (req, res) => {
 
 /* =========================
    UPDATE DEPOSIT ADDRESS (ADMIN)
-   FIXED ROUTE CONSISTENCY
 ========================= */
 app.put("/api/admin/deposit-address", (req, res) => {
   const { address } = req.body || {};

@@ -2,7 +2,7 @@ let currentTotal = 0;
 let depositAddress = "";
 let hidden = localStorage.getItem("hideBalance") === "true";
 
-const API_URL = "http://localhost:5000";
+const API_URL = "https://cryptosave.onrender.com";
 
 /* =========================
    INIT

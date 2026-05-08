@@ -11,7 +11,7 @@ let currentFilter = "all";
 ========================= */
 async function loadTransactions() {
     try {
-        const res = await fetch("http://localhost:5000/portfolio");
+        const res = await fetch("https://cryptosave.onrender.com/portfolio");
         const data = await res.json();
 
         allTransactions = Array.isArray(data.transactions)
