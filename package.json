@@ -1,10 +1,11 @@
 {
   "name": "crypto-dashboard",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Crypto Save Backend",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "test": "node tests/auth.test.js"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +16,7 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "mongoose": "^9.6.1",
-    "resend": "^6.16.0"
+    "nodemailer": "^7.0.1",
+    "resend": "^4.0.0"
   }
 }

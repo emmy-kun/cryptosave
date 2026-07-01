@@ -174,6 +174,13 @@ app.post("/api/auth/verify-code", (req, res) => {
 
 });
 
+app.get("/version", (req, res) => {
+    res.json({
+        version: "LOGIN_VERIFICATION_V1",
+        hasRequestCodeRoute: true
+    });
+});
+
 /* =========================
    GET DEPOSIT ADDRESS
 ========================= */
