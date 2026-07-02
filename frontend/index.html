@@ -5,7 +5,6 @@
   <title>Login - Crypto Save</title>
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body class="login-body">
 
   <div class="login-container">
@@ -18,36 +17,23 @@
 
       <p class="subtitle">Secure access to your crypto dashboard</p>
 
-      <input
-        id="username"
-        placeholder="Username"
-        class="input-field">
+      <input id="username" placeholder="Username" class="input-field">
+      <input id="password" type="password" placeholder="Password" class="input-field">
 
-      <input
-        id="password"
-        type="password"
-        placeholder="Password"
-        class="input-field">
-
-      <button
-        onclick="requestVerificationCode()"
-        class="login-btn"
-        id="loginBtn">
-
-        <span id="btnText">
-          Sign In
-        </span>
-
-        <span
-          id="spinner"
-          class="spinner hidden">
-        </span>
-
+      <!-- 🔥 UPDATED BUTTON WITH SPINNER -->
+      <button onclick="login()" class="login-btn" id="loginBtn">
+        <span id="btnText">Sign In</span>
+        <span id="spinner" class="spinner hidden"></span>
       </button>
 
     </div>
 
   </div>
+
+  <script src="login.js"></script>
+</body>
+
+</html>
 
   <!-- ===========================
        VERIFICATION MODAL

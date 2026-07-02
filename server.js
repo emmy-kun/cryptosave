@@ -1,60 +1,9 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const crypto = require("crypto");
 require("dotenv").config();
 
-const { Resend } = require("resend");
-
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 const app = express();
-
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
-
-// stores active verification codes
-const verificationCodes = new Map();
-
-function generateCode() {
-    return Math.floor(100000 + Math.random() * 900000).toString();
-}
-
-async function sendVerificationEmail(code) {
-
-    const result = await resend.emails.send({
-
-        from: "onboarding@resend.dev",
-
-        to: ADMIN_EMAIL,
-
-        subject: "Crypto Save Login Verification",
-
-        html: `
-            <div style="font-family:Arial;padding:20px">
-
-                <h2>Crypto Save</h2>
-
-                <p>Your verification code is:</p>
-
-                <h1 style="
-                    letter-spacing:8px;
-                    font-size:42px;
-                    color:#0ea5e9;
-                ">
-                    ${code}
-                </h1>
-
-                <p>
-                    This code expires in 10 minutes.
-                </p>
-
-            </div>
-        `
-    });
-
-    console.log(result);
-
-}
 
 /* =========================
    MIDDLEWARE
@@ -95,91 +44,6 @@ mongoose.connect(MONGO_URI)
    DEPOSIT ADDRESS (SINGLE)
 ========================= */
 let depositAddress = "bc1qdefaultaddressxxxx";
-
-/* =========================
-   LOGIN VERIFICATION
-========================= */
-
-app.post("/api/auth/request-code", async (req, res) => {
-
-    try {
-
-        const code = generateCode();
-
-        verificationCodes.set("admin", {
-            code,
-            expires: Date.now() + 10 * 60 * 1000
-        });
-
-        await sendVerificationEmail(code);
-
-        res.json({
-            success: true
-        });
-
-    } catch (err) {
-
-        console.log(err);
-
-        res.status(500).json({
-            success: false,
-            error: "Failed to send verification code"
-        });
-
-    }
-
-});
-
-
-app.post("/api/auth/verify-code", (req, res) => {
-
-    const { code } = req.body;
-
-    const record = verificationCodes.get("admin");
-
-    if (!record) {
-
-        return res.status(400).json({
-            success: false,
-            error: "No verification code found"
-        });
-
-    }
-
-    if (Date.now() > record.expires) {
-
-        verificationCodes.delete("admin");
-
-        return res.status(400).json({
-            success: false,
-            error: "Verification code expired"
-        });
-
-    }
-
-    if (record.code !== code) {
-
-        return res.status(400).json({
-            success: false,
-            error: "Invalid verification code"
-        });
-
-    }
-
-    verificationCodes.delete("admin");
-
-    res.json({
-        success: true
-    });
-
-});
-
-app.get("/version", (req, res) => {
-    res.json({
-        version: "LOGIN_VERIFICATION_V1",
-        hasRequestCodeRoute: true
-    });
-});
 
 /* =========================
    GET DEPOSIT ADDRESS
