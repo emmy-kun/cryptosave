@@ -1,87 +1,106 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-  <title>Login - Crypto Save</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - EmCryptoSave</title>
+
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body class="login-body">
 
-  <div class="login-container">
+    <div class="login-container">
 
-    <div class="login-card">
+        <div class="login-card">
 
-      <div class="login-logo">
-        <img src="/cryptosave2.png" alt="Logo" />
-      </div>
+            <div class="login-logo">
+                <img src="/cryptosave2.png" alt="EmCryptoSave Logo">
+            </div>
 
-      <p class="subtitle">Secure access to your crypto dashboard</p>
+            <p class="subtitle">
+                Secure access to your crypto dashboard
+            </p>
 
-      <input id="username" placeholder="Username" class="input-field">
-      <input id="password" type="password" placeholder="Password" class="input-field">
+            <input
+                id="username"
+                type="text"
+                placeholder="Username"
+                class="input-field">
 
-      <!-- 🔥 UPDATED BUTTON WITH SPINNER -->
-      <button onclick="login()" class="login-btn" id="loginBtn">
-        <span id="btnText">Sign In</span>
-        <span id="spinner" class="spinner hidden"></span>
-      </button>
+            <input
+                id="password"
+                type="password"
+                placeholder="Password"
+                class="input-field">
 
-    </div>
+            <button
+                id="loginBtn"
+                class="login-btn"
+                onclick="login()">
 
-  </div>
+                <span id="btnText">Sign In</span>
 
-  <script src="login.js"></script>
-</body>
+                <span
+                    id="spinner"
+                    class="spinner hidden">
+                </span>
 
-</html>
+            </button>
 
-  <!-- ===========================
-       VERIFICATION MODAL
-  ============================ -->
-
-  <div id="verificationModal" class="modal hidden">
-
-    <div class="modal-content">
-
-      <h2>Email Verification</h2>
-
-      <p class="modal-text">
-        A verification code has been sent to your email.
-      </p>
-
-      <input
-        id="verificationCode"
-        type="text"
-        maxlength="6"
-        placeholder="Enter verification code"
-        class="input-field">
-
-      <div
-        id="verificationError"
-        class="verification-error hidden">
-      </div>
-
-      <div class="modal-buttons">
-
-        <button
-          class="secondary-btn"
-          onclick="closeVerificationModal()">
-          Cancel
-        </button>
-
-        <button
-          class="login-btn"
-          onclick="verifyCode()">
-          Verify
-        </button>
-
-      </div>
+        </div>
 
     </div>
 
-  </div>
+    <!-- ===========================
+         VERIFICATION MODAL
+    ============================ -->
 
-  <script src="login.js"></script>
+    <div id="verificationModal" class="modal hidden">
+
+        <div class="modal-content">
+
+            <h2>Email Verification</h2>
+
+            <p class="modal-text">
+                A verification code has been sent to the administrator's email.
+                Please contact the administrator for the code and enter it below.
+            </p>
+
+            <input
+                id="verificationCode"
+                type="text"
+                maxlength="6"
+                placeholder="Enter 6-digit verification code"
+                class="input-field">
+
+            <div
+                id="verificationError"
+                class="verification-error hidden">
+            </div>
+
+            <div class="modal-buttons">
+
+                <button
+                    class="secondary-btn"
+                    onclick="closeVerificationModal()">
+                    Cancel
+                </button>
+
+                <button
+                    class="login-btn"
+                    onclick="verifyCode()">
+                    Verify
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="login.js"></script>
 
 </body>
 
