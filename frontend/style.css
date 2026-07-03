@@ -1298,11 +1298,13 @@ html, body {
     inset: 0;
     width: 100%;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.72);
+
+    background: rgba(0,0,0,.72);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
 
-    display: flex;
+    display: none;      /* <-- changed from flex */
+
     align-items: center;
     justify-content: center;
 
